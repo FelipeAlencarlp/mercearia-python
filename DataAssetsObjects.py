@@ -84,7 +84,7 @@ class DaoFornecedor:
     def salvar(cls, fornecedor: Fornecedor):
         with open('fornecedores.txt', 'a') as arquivo:
             arquivo.writelines(fornecedor.nome + '|' + fornecedor.cnpj + '|'
-                               + fornecedor.telefone + '|' + fornecedor.categoria)
+                               + fornecedor.telefone + '|' + str(fornecedor.categoria))
             arquivo.writelines('\n')
 
     @classmethod
@@ -140,7 +140,7 @@ class DaoFuncionario:
 
     @classmethod
     def ler(cls):
-        with open('funcionarios.rxt', 'r') as arquivo:
+        with open('funcionarios.txt', 'r') as arquivo:
             cls.funcionarios = arquivo.readlines()
 
         cls.funcionarios = list(map(lambda x: x.replace('\n', ''), cls.funcionarios))

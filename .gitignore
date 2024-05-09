@@ -3,3 +3,6 @@ __pycache__
 categorias.txt
 estoque.txt
 vendas.txt
+clientes.txt
+fornecedores.txt
+funcionarios.txt
