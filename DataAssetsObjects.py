@@ -74,7 +74,7 @@ class DaoEstoque:
 
         if len(cls.estoque) > 0:
             for estoque in cls.estoque:
-                listaEstoque.append(Estoque(Produtos(estoque[0], estoque[1], estoque[2], estoque[3])))
+                listaEstoque.append(Estoque(Produtos(estoque[0], estoque[1], estoque[2]), estoque[3]))
             
         return listaEstoque
     
