@@ -48,8 +48,8 @@ class DaoVenda:
         listaVenda = []
 
         for venda in cls.venda:
-            listaVenda.append(Venda(Produtos(venda[0], venda[1], venda[2],
-                                             venda[3], venda[4], venda[5])))
+            listaVenda.append(Venda(Produtos(venda[0], venda[1], venda[2]),
+                                             venda[3], venda[4], venda[5]))
 
         return listaVenda
     
@@ -74,7 +74,7 @@ class DaoEstoque:
 
         if len(cls.estoque) > 0:
             for estoque in cls.estoque:
-                listaEstoque.append(Estoque(Produtos(estoque[0], estoque[1], estoque[2]), estoque[3]))
+                listaEstoque.append(Estoque(Produtos(estoque[0], estoque[1], estoque[2]), int(estoque[3])))
             
         return listaEstoque
     

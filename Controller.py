@@ -170,3 +170,107 @@ class ControllerEstoque:
                       f'Quantidade: {produto.quantidade}'
                     )
                 print('-----------------')
+
+
+class ControllerVenda:
+    def cadastrarVenda(self, nomeProduto, vendedor, comprador, quantidadeVendida):
+        listaEstoque = DaoEstoque.ler()
+        temp = []
+        existeEmEstoque = False
+        temQuantidade = False
+
+        for produto in listaEstoque:
+            if existeEmEstoque == False:
+                if produto.produto.nome == nomeProduto:
+                    existeEmEstoque = True
+
+                    if produto.quantidade >= quantidadeVendida:
+                        temQuantidade = True
+                        produto.quantidade = int(produto.quantidade) - int(quantidadeVendida)
+
+                        vendido = Venda(Produtos(produto.produto.nome, produto.produto.preco, produto.produto.categoria),
+                                        vendedor, comprador, quantidadeVendida)
+
+                        valorCompra = int(quantidadeVendida) * int(produto.produto.preco)
+
+                        DaoVenda.salvar(vendido)
+
+            # guardar os valores dentro da variável temporária para não perder nenhuma informação
+            temp.append(Estoque(Produtos(produto.produto.nome, produto.produto.preco, produto.produto.categoria), produto.quantidade))
+
+        arquivo = open('estoque.txt', 'w')
+        arquivo.write('')
+
+        for i in temp:
+            with open('estoque.txt', 'a') as arquivo:
+                arquivo.writelines(i.produto.nome + '|' + i.produto.preco + '|'
+                                    + i.produto.categoria + '|' + str(i.quantidade))
+                arquivo.writelines('\n')
+
+        if existeEmEstoque == False:
+            print('Impossível prosseguir! O produto não existe em estoque.')
+            return None
+        
+        elif not temQuantidade:
+            print('A quantidade de venda não contém no estoque.')
+            return None
+        
+        else:
+            print('Venda realizada com sucesso!')
+            return valorCompra
+
+    def relatorioProdutos(self):
+        listaVendas = DaoVenda.ler()
+        listaProdutos = []
+
+        for venda in listaVendas:
+            nome = venda.produtosVendido.nome
+            quantidade = venda.quantidadeVendido
+            tamanho = list(filter(lambda produto: produto['produto'] == nome, listaProdutos))
+
+            if len(tamanho) > 0:
+                listaProdutos = list(map(lambda produto: {'produto' : nome,'quantidade' : int(produto['quantidade']) + int(quantidade)} if(produto['produto'] == nome) else(produto), listaProdutos))
+
+            else:
+                listaProdutos.append({'produto' : nome, 'quantidade' : int(quantidade)})
+
+        ordenado = sorted(listaProdutos, key=lambda k: k['quantidade'], reverse=True)
+        a = 1
+
+        print('Esses são os produtos mais vendidos')
+        for i in ordenado:
+            print(f'==========Produto [{a}]==========')
+            print(f"Produto: {i['produto']}\n"
+                  f"Quantidade: {i['quantidade']}\n")
+            a += 1
+
+    def mostrarVendas(self, dataInicial, dataFinal):
+        listaVendas = DaoVenda.ler()
+        dataInicioFormatada = datetime.strptime(dataInicial, '%d/%m/%Y')
+        dataFinalFormatada = datetime.strptime(dataFinal, '%d/%m/%Y')
+
+        vendasSelecionadas = list(filter(lambda venda: datetime.strptime(venda.data, '%d/%m/%Y') >= dataInicioFormatada
+                                         and datetime.strptime(venda.data, '%d/%m/%Y') <= dataFinalFormatada, listaVendas))
+
+        contador = 1
+        totalVendido = 0
+
+        for venda in vendasSelecionadas:
+            print(f'==========Venda [{contador}]==========')
+            print(f'Nome: {venda.produtosVendido.nome}\n'
+                  f'Preço: {venda.produtosVendido.preco}\n'
+                  f'Categoria: {venda.produtosVendido.categoria}\n'
+                  f'Quantidade: {venda.quantidadeVendido}\n'
+                  f'Cliente: {venda.comprador}\n'
+                  f'Vendedor: {venda.vendedor}\n'
+                  f'Data: {venda.data}\n')
+            
+            totalVendido += int(venda.produtosVendido.preco) * int(venda.quantidadeVendido)
+            contador += 1
+
+        print(f'Total vendido: {totalVendido}')
+
+p = ControllerVenda()
+# p.cadastrarVenda('Uva', 'Bruto', 'Felipe', 2)
+
+p.mostrarVendas('09/05/2024', '10/05/2024')
