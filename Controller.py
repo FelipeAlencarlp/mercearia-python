@@ -41,6 +41,16 @@ class ControllerCategoria:
                     arquivo.writelines(categoria.categoria)
                     arquivo.writelines('\n')
 
+        listaEstoque = DaoEstoque.ler()
+        
+        listaEstoque = list(map(lambda x: Estoque(Produtos(x.produto.nome, x.produto.preco, 'Sem categoria'), x.quantidade) if(x.produto.categoria == categoriaRemover) else(x), listaEstoque))
+
+        with open('estoque.txt', 'w') as arquivo:
+            for produto in listaEstoque:
+                arquivo.writelines(produto.produto.nome + '|' + produto.produto.preco + '|'
+                                   + produto.produto.categoria + '|' + str(produto.quantidade))
+                arquivo.writelines('\n')
+
     def alterarCategoria(self, categoriaAlterar, categoriaAlterada):
         listaCategoria = DaoCategoria.ler()
         filtrarCategoria = list(filter(lambda lerCategoria: lerCategoria.categoria == categoriaAlterar, listaCategoria))
@@ -77,7 +87,6 @@ class ControllerCategoria:
         
         for categoria in categorias:
             print(f'Categoria: {categoria.categoria}')
-
 
 class ControllerEstoque:
     def cadastrarProduto(self, nome, preco, categoria, quantidade):
@@ -505,3 +514,8 @@ class ControllerFuncionario:
                   f'E-mail: {funcionario.email}\n'
                   f'Endereço: {funcionario.endereco}')
             print('----------------------------')
+
+
+a = ControllerCategoria()
+# a.cadastrarCategoria('Congelados')
+a.removerCategoria('Frutas')
