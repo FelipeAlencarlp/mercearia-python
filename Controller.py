@@ -353,3 +353,79 @@ class ControllerFornecedor:
                   f'Telefone: {fornecedor.telefone}\n'
                   f'CNPJ: {fornecedor.cnpj}')
             print('----------------------')
+
+
+class ControllerCliente:
+    def cadastrarCliente(self, nome, telefone, cpf, email, endereco):
+        listaClientes = DaoPessoa.ler()
+        listaCpf = list(filter(lambda cliente: cliente.cpf == cpf, listaClientes))
+
+        if len(listaCpf) > 0:
+            print('o CPF digitado já existe')
+
+        else:
+            if len(cpf) == 11 and len(telefone) >= 10 and len(telefone) <= 11:
+                DaoPessoa.salvar(Pessoa(nome, telefone, cpf, email, endereco))
+                print('Cliente cadastrado com sucesso!')
+
+            else:
+                print('Digite um CPF e telefone válido.')
+
+    def removerCliente(self, nome):
+        listaClientes = DaoPessoa.ler()
+        clientes = list(filter(lambda cliente: cliente.nome == nome, listaClientes))
+
+        if len(clientes) > 0:
+            for i in range(len(clientes)):
+                listaClientes[i].nome == nome
+                del listaClientes[i]
+                break
+
+        else:
+            print('O cliente que deseja remover não existe.')
+            return None
+
+        with open('clientes.txt', 'w') as arquivo:
+            for cliente in listaClientes:
+                arquivo.writelines(cliente.nome + '|' + cliente.telefone + '|'
+                               + cliente.cpf + '|' + cliente.email + '|' + cliente.endereco)
+                arquivo.writelines('\n')
+            
+            print('Cliente removido com sucesso!')
+
+    def alterarCliente(self, nomeCliente, novoNome, novoTelefone, novoCpf, novoEmail, novoEndereco):
+        listaClientes = DaoPessoa.ler()
+        clientes = list(filter(lambda cliente: cliente.nome == nomeCliente, listaClientes))
+
+        if len(clientes) > 0:
+            clienteAlterado = list(map(lambda cliente: Pessoa(novoNome, novoTelefone, novoCpf, novoEmail, novoEndereco)
+                                       if(cliente.nome == nomeCliente) else(cliente), listaClientes))
+            
+        else:
+            print('O cliente que deseja alterar não existe.')
+
+        with open('clientes.txt', 'w') as arquivo:
+            for cliente in clienteAlterado:
+                arquivo.writelines(cliente.nome + '|' + cliente.telefone + '|'
+                               + cliente.cpf + '|' + cliente.email + '|' + cliente.endereco)
+                arquivo.writelines('\n')
+            
+            print('Cliente alterado com sucesso!')
+
+    def mostrarClientes(self):
+        clientes = DaoPessoa.ler()
+
+        if len(clientes) == 0:
+            print('Lista de clientes vazia!')
+            return None
+
+        print('==========Clientes==========')
+        for cliente in clientes:
+            print(f'Nome: {cliente.nome}\n'
+                  f'Telefone: {cliente.telefone}\n'
+                  f'CPF: {cliente.cpf}\n'
+                  f'E-mail: {cliente.email}\n'
+                  f'Endereço: {cliente.endereco}')
+            print('----------------------------')
+
+
