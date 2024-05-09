@@ -429,3 +429,79 @@ class ControllerCliente:
             print('----------------------------')
 
 
+class ControllerFuncionario:
+    def cadastrarFuncionario(self, clt, nome, telefone, cpf, email, endereco):
+        listaFuncionarios = DaoFuncionario.ler()
+        listaCpf = list(filter(lambda funcionario: funcionario.cpf == cpf, listaFuncionarios))
+        listaClt = list(filter(lambda funcionario: funcionario.cpf == cpf, listaFuncionarios))
+
+        if len(listaCpf) > 0:
+            print('o CPF digitado já existe')
+
+        elif len(listaClt) > 0:
+            print('Já existe um funcionário com essa CLT')
+
+        else:
+            if len(cpf) == 11 and len(telefone) >= 10 and len(telefone) <= 11:
+                DaoFuncionario.salvar(Funcionario(clt, nome, telefone, cpf, email, endereco))
+                print('Funcionário cadastrado com sucesso!')
+
+            else:
+                print('Digite um CPF e telefone válido.')
+
+    def removerFuncionario(self, nome):
+        listaFuncionarios = DaoFuncionario.ler()
+        funcionarios = list(filter(lambda funcionario: funcionario.nome == nome, listaFuncionarios))
+
+        if len(funcionarios) > 0:
+            for i in range(len(funcionarios)):
+                listaFuncionarios[i].nome == nome
+                del listaFuncionarios[i]
+                break
+
+        else:
+            print('O funcionário que deseja remover não existe.')
+            return None
+
+        with open('funcionarios.txt', 'w') as arquivo:
+            for funcionario in listaFuncionarios:
+                arquivo.writelines(funcionario.clt + '|' + funcionario.nome + '|' + funcionario.telefone + '|'
+                                   + funcionario.cpf + '|' + funcionario.email + '|' + funcionario.endereco)
+                arquivo.writelines('\n')
+            
+            print('Funcionário removido com sucesso!')
+
+    def alterarFuncionario(self, nomeFuncionario, novoClt, novoNome, novoTelefone, novoCpf, novoEmail, novoEndereco):
+        listaFuncionarios = DaoFuncionario.ler()
+        funcionarios = list(filter(lambda funcionario: funcionario.nome == nomeFuncionario, listaFuncionarios))
+
+        if len(funcionarios) > 0:
+            funcionarioAlterado = list(map(lambda funcionario: Funcionario(novoClt, novoNome, novoTelefone, novoCpf, novoEmail, novoEndereco) if(funcionario.nome == nomeFuncionario) else(funcionario), listaFuncionarios))
+            
+        else:
+            print('O funcionário que deseja alterar não existe.')
+
+        with open('funcionarios.txt', 'w') as arquivo:
+            for funcionario in funcionarioAlterado:
+                arquivo.writelines(funcionario.clt + '|' + funcionario.nome + '|' + funcionario.telefone + '|'
+                                   + funcionario.cpf + '|' + funcionario.email + '|' + funcionario.endereco)
+                arquivo.writelines('\n')
+            
+            print('Funcionário alterado com sucesso!')
+
+    def mostrarFuncionarios(self):
+        funcionarios = DaoFuncionario.ler()
+
+        if len(funcionarios) == 0:
+            print('Lista de funcionários vazia!')
+            return None
+
+        print('==========Funcionarios==========')
+        for funcionario in funcionarios:
+            print(f'CLT: {funcionario.clt}\n'
+                  f'Nome: {funcionario.nome}\n'
+                  f'Telefone: {funcionario.telefone}\n'
+                  f'CPF: {funcionario.cpf}\n'
+                  f'E-mail: {funcionario.email}\n'
+                  f'Endereço: {funcionario.endereco}')
+            print('----------------------------')
