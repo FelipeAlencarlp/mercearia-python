@@ -41,6 +41,7 @@ class ControllerCategoria:
                     arquivo.writelines(categoria.categoria)
                     arquivo.writelines('\n')
 
+        # Alterar no estoque para Sem categoria quando remover uma categoria
         listaEstoque = DaoEstoque.ler()
         
         listaEstoque = list(map(lambda x: Estoque(Produtos(x.produto.nome, x.produto.preco, 'Sem categoria'), x.quantidade) if(x.produto.categoria == categoriaRemover) else(x), listaEstoque))
@@ -66,6 +67,17 @@ class ControllerCategoria:
                                             else(lerCategoria), listaCategoria))
                 
                 print('Categoria alterada com sucesso!')
+
+                # Alterar também no estoque o nome da categoria
+                listaEstoque = DaoEstoque.ler()
+                
+                listaEstoque = list(map(lambda x: Estoque(Produtos(x.produto.nome, x.produto.preco, categoriaAlterada), x.quantidade) if(x.produto.categoria == categoriaAlterar) else(x), listaEstoque))
+
+                with open('estoque.txt', 'w') as arquivo:
+                    for produto in listaEstoque:
+                        arquivo.writelines(produto.produto.nome + '|' + produto.produto.preco + '|'
+                                        + produto.produto.categoria + '|' + str(produto.quantidade))
+                        arquivo.writelines('\n')
 
             else:
                 print('Essa categoria já existe!')
@@ -514,8 +526,3 @@ class ControllerFuncionario:
                   f'E-mail: {funcionario.email}\n'
                   f'Endereço: {funcionario.endereco}')
             print('----------------------------')
-
-
-a = ControllerCategoria()
-# a.cadastrarCategoria('Congelados')
-a.removerCategoria('Frutas')
